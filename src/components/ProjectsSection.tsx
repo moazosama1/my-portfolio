@@ -1,0 +1,283 @@
+import { useState, useRef, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
+import { ExternalLink, Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List } from "lucide-react";
+import PhoneFrame from "./PhoneFrame";
+import IPhoneContainer from "./IPhoneContainer";
+
+const projects = [
+  {
+    title: "Zlunix",
+    desc: "A comprehensive cloud-based SaaS platform for managing your business operations with powerful analytics and team collaboration tools.",
+    tags: ["React", "Node.js", "Tailwind", "MongoDB"],
+    github: "#",
+    web: "https://app.zlunix.com/",
+    playStore: "",
+    appStore: "",
+    icon: "https://zlunix.com/images/zlunix_icon.png",
+    url: "https://app.zlunix.com/"
+  },
+  {
+    title: "Zlunix Admin",
+    desc: "The administrative dashboard for Zlunix platform, providing full control over users, subscriptions, and system settings.",
+    tags: ["React", "Express", "PostgreSQL", "Admin"],
+    github: "#",
+    web: "https://admin.zlunix.com/",
+    playStore: "",
+    appStore: "",
+    icon: "https://zlunix.com/images/zlunix_icon.png",
+    url: "https://admin.zlunix.com/"
+  },
+  {
+    title: "Attendance App",
+    desc: "A smart GPS-based attendance tracking mobile application for employees with real-time location verification.",
+    tags: ["Flutter", "Dart", "Firebase", "Google Maps"],
+    github: "#",
+    web: "https://gps.alshaheenest.com/",
+    playStore: "",
+    appStore: "",
+    icon: "https://play-lh.googleusercontent.com/1sWfDhk6pwh_BMiq5RWr92dvECV6h8drLNz2LOi39RAeXz3YzsAJ2ZT0Cteabw9B0ow=w240-h480-rw",
+    url: "https://gps.alshaheenest.com/"
+  },
+  {
+    title: "ChatConnect",
+    desc: "Real-time messaging app with end-to-end encryption, group chats, media sharing, and push notifications.",
+    tags: ["Flutter", "Provider", "WebSocket", "Firebase"],
+    github: "#",
+    web: "",
+    playStore: "",
+    appStore: "",
+    icon: "https://cdn-icons-png.flaticon.com/512/1041/1041916.png",
+    url: "https://example.com/chat"
+  }
+];
+
+const springConfig = { stiffness: 100, damping: 30 };
+
+const ProjectsSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [activeAppUrl, setActiveAppUrl] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const appParam = params.get("app");
+
+    if (appParam) {
+      const targetApp = projects.find(
+        (p) => p.title.toLowerCase().replace(/\s+/g, '-') === appParam.toLowerCase()
+      );
+
+      if (targetApp) {
+        // Use a small timeout to let the page render first
+        setTimeout(() => {
+          openAndScrollToApp(targetApp.url);
+        }, 500);
+      }
+    }
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const rawRotateX = useTransform(scrollYProgress, [0, 0.2, 0.4], [15, 3, 0]);
+  const rawScale = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.65, 0.85, 1]);
+  const rawY = useTransform(scrollYProgress, [0, 0.4], [150, 0]);
+
+  const phoneRotateX = useSpring(rawRotateX, springConfig);
+  const phoneScale = useSpring(rawScale, springConfig);
+  const phoneY = useSpring(rawY, springConfig);
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (!isLocked && v >= 0.4) setIsLocked(true);
+  });
+
+  const openAndScrollToApp = (url: string) => {
+    setActiveAppUrl(url);
+    setIsLocked(true);
+
+    setTimeout(() => {
+      // Responsive scrolling
+      if (window.innerWidth < 1024 && phoneRef.current) {
+        // On mobile, scroll directly to the phone with a small top offset
+        const yOffset = -80;
+        const y = phoneRef.current.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      } else if (phoneRef.current) {
+        // On desktop, ensure phone is fully visible
+        phoneRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (sectionRef.current) {
+        sectionRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
+
+  return (
+    <section id="projects" ref={sectionRef} className="relative py-24 overflow-hidden">
+      <div className="container mx-auto px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
+        >
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-2 text-gradient">Projects</h2>
+            <div className="w-16 h-1 bg-gradient-primary rounded-full" />
+          </div>
+
+          <div className="flex bg-white/5 border border-white/10 p-1 rounded-lg w-fit shrink-0">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'list' ? 'bg-white/10 text-white shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/5'}`}
+              title="List View"
+            >
+              <List size={20} />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'grid' ? 'bg-white/10 text-white shadow-sm' : 'text-white/50 hover:text-white hover:bg-white/5'}`}
+              title="Grid View"
+            >
+              <LayoutGrid size={20} />
+            </button>
+          </div>
+        </motion.div>
+
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+          {/* Project cards */}
+          <div className={`w-full lg:w-1/2 ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-6 items-start content-start' : 'space-y-6'}`}>
+            {projects.map((proj, i) => (
+              <motion.div
+                key={proj.title}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                onClick={() => openAndScrollToApp(proj.url)}
+                className="glass rounded-xl p-6 hover:shadow-glow transition-all duration-500 group cursor-pointer"
+              >
+                <div className="flex flex-col h-full">
+                  <h3 className="text-xl font-bold font-heading text-foreground mb-3 group-hover:text-primary transition-colors">
+                    {proj.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-5 leading-relaxed">{proj.desc}</p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {proj.tags.map((tag) => (
+                      <span key={tag} className="text-xs font-mono px-2.5 py-1 rounded-full bg-muted text-primary">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
+                    {proj.github && proj.github !== "#" && proj.github !== "" && (
+                      <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
+                        <Github size={14} /> Source
+                      </a>
+                    )}
+                    {proj.web && proj.web !== "#" && proj.web !== "" && (
+                      <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
+                        <Globe size={14} /> Web
+                      </a>
+                    )}
+                    {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && (
+                      <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
+                        <Smartphone size={14} /> Play Store
+                      </a>
+                    )}
+                    {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && (
+                      <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
+                        <Apple size={14} /> App Store
+                      </a>
+                    )}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }}
+                      className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"
+                    >
+                      <Play size={14} className="fill-current" /> Run
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Sticky phone */}
+          <div ref={phoneRef} className="w-full lg:w-1/2 flex justify-center lg:sticky lg:top-32 lg:self-start h-fit" style={{ perspective: "1200px" }}>
+            <motion.div
+              style={
+                isLocked
+                  ? { rotateX: 0, scale: 1, y: 0 }
+                  : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }
+              }
+              className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
+            >
+              <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
+                <IPhoneContainer
+                  shouldUnlock={isLocked}
+                  activeAppUrl={activeAppUrl}
+                  onAppOpen={setActiveAppUrl}
+                  onAppClose={() => setActiveAppUrl(null)}
+                  apps={projects}
+                />
+              </PhoneFrame>
+
+              {/* External Android Navigation Bar */}
+              {isLocked && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute -bottom-20 left-0 right-0 mx-auto w-[85%] max-w-[280px] h-12 bg-black/80 backdrop-blur-md rounded-full border border-white/10 grid grid-cols-3 items-center justify-items-center shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] z-50 pointer-events-auto"
+                >
+                  <button
+                    onClick={() => {
+                      try {
+                        const iframe = document.querySelector('iframe');
+                        if (iframe && iframe.contentWindow) {
+                          try {
+                            iframe.contentWindow.history.back();
+                          } catch (err) {
+                            // CORS bypass attempt: Send a message to the iframe
+                            // Inside Zlunix or your Flutter app, you'd add: 
+                            // window.addEventListener('message', (e) => { if(e.data === 'goBack') window.history.back(); })
+                            iframe.contentWindow.postMessage('goBack', '*');
+                          }
+                        } else {
+                          console.log("No iframe found to go back.");
+                        }
+                      } catch (e) {
+                        console.log("Cannot go back in cross-origin iframe", e);
+                      }
+                    }}
+                    className="p-3 text-white/50 hover:text-white transition-colors active:scale-90 rounded-full hover:bg-white/5"
+                    title="Back"
+                  >
+                    <ChevronLeft size={24} strokeWidth={2.5} />
+                  </button>
+
+                  <button
+                    onClick={() => setActiveAppUrl(null)}
+                    className="p-3 flex items-center justify-center group active:scale-90 transition-transform rounded-full hover:bg-white/5"
+                    title="Home (Close App)"
+                  >
+                    <div className="w-4 h-4 rounded-[6px] border-[2px] border-white/50 group-hover:border-white transition-colors shadow-sm" />
+                  </button>
+
+                  <div></div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProjectsSection;

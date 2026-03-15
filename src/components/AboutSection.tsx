@@ -17,13 +17,13 @@ const AboutSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-5 text-muted-foreground leading-relaxed">
             <p>
-              I'm a passionate Flutter Developer with 4+ years of experience crafting high-quality cross-platform mobile applications. I specialize in building pixel-perfect UIs, integrating complex APIs, and implementing clean architecture patterns.
+              I'm a Flutter Developer with 1.5+ years of experience architecting scalable, cross-platform applications using Clean Architecture, MVI, and BLoC/Cubit. I'm also a CS Engineering student in the Elite 10x Cohort at HTI.
             </p>
             <p>
-              My journey started with native Android development before transitioning to Flutter, which allows me to deliver stunning apps for both iOS and Android from a single codebase. I'm deeply committed to writing testable, maintainable code and staying current with the latest Flutter ecosystem developments.
+              I have a proven freelance track record delivering enterprise-grade solutions including real-time tracking systems and published apps on Google Play. My experience includes integrating AI agents into mobile workflows and building robust backend services with Firebase and Supabase.
             </p>
             <p>
-              When I'm not coding, you'll find me contributing to open-source Flutter packages, writing technical articles, or exploring new state management solutions.
+              I'm deeply committed to writing testable, maintainable code using SOLID principles and Design Patterns, delivering stunning apps for both iOS and Android from a single codebase.
             </p>
           </div>
 

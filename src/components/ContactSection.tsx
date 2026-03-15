@@ -48,21 +48,21 @@ const ContactSection = () => {
 
         <div className="grid lg:grid-cols-2 gap-12">
           <div className="space-y-6">
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-lg">
               I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions. Let's build something amazing together!
             </p>
             <div className="space-y-4">
               {[
-                { icon: Mail, text: "youssefmdev22@gmail.com", href: "mailto:youssefmdev22@gmail.com" },
-                { icon: Phone, text: "+201098445595", href: "tel:+201098445595" },
-                { icon: MapPin, text: "Egypt" },
+                { icon: Mail, text: "www.moazosama525@gmail.com", href: "mailto:www.moazosama525@gmail.com" },
+                { icon: Phone, text: "+201095341166", href: "tel:+201095341166" },
+                { icon: MapPin, text: "Cairo" },
               ].map(({ icon: Icon, text, href }) => {
                 const innerContent = (
                   <>
-                    <div className="p-3 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
+                    <div className="p-3 rounded-lg bg-card border border-border/50 group-hover:bg-primary/10 transition-colors shadow-sm">
                       <Icon size={18} className="text-primary" />
                     </div>
-                    <span className="group-hover:text-foreground transition-colors">{text}</span>
+                    <span className="group-hover:text-primary transition-colors font-medium">{text}</span>
                   </>
                 );
 
@@ -81,46 +81,46 @@ const ContactSection = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="glass rounded-xl p-6 space-y-5">
+          <form onSubmit={handleSubmit} className="bg-card/40 backdrop-blur-md rounded-2xl p-8 border border-border/50 shadow-sm space-y-5">
             <div>
-              <label className="block text-sm text-foreground mb-1.5">Name</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Name</label>
               <input
                 required
                 disabled={isSubmitting}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow disabled:opacity-50"
+                className="w-full px-4 py-3 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all disabled:opacity-50"
                 placeholder="Your name"
               />
             </div>
             <div>
-              <label className="block text-sm text-foreground mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Email</label>
               <input
                 required
                 type="email"
                 disabled={isSubmitting}
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow disabled:opacity-50"
+                className="w-full px-4 py-3 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all disabled:opacity-50"
                 placeholder="your@email.com"
               />
             </div>
             <div>
-              <label className="block text-sm text-foreground mb-1.5">Message</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Message</label>
               <textarea
                 required
                 rows={4}
                 disabled={isSubmitting}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow resize-none disabled:opacity-50"
+                className="w-full px-4 py-3 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none disabled:opacity-50"
                 placeholder="Your message..."
               />
             </div>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all shadow-md hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
             >
               {isSubmitting ? (
                 <>

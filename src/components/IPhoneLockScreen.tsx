@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Lock } from "lucide-react";
 
 interface IPhoneLockScreenProps {
     isUnlocked: boolean;
@@ -62,6 +63,25 @@ const IPhoneLockScreen = ({ isUnlocked }: IPhoneLockScreenProps) => {
                             {currentTime}
                         </motion.div>
                     </div>
+
+                    {/* Middle Section: Locked Message as an iOS Notification */}
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 20 }}
+                        className="relative z-10 w-[85%] mt-8 flex flex-col items-center"
+                    >
+                        <div className="w-full rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.3)] flex flex-col items-center text-center">
+                             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-3">
+                                 <Lock className="w-5 h-5 text-white/90" />
+                             </div>
+                             <h3 className="text-sm font-semibold text-white mb-1.5 leading-tight tracking-wide">Developer Mode</h3>
+                             <p className="text-[11px] text-white/70 leading-relaxed font-medium">
+                                 Live previews are currently locked.<br/>
+                                 Projects are under active development.
+                             </p>
+                        </div>
+                    </motion.div>
 
                     {/* Bottom Section: Swipe indicator */}
                     <motion.div

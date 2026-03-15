@@ -264,12 +264,12 @@ const ProjectsSection = () => {
                 />
               </PhoneFrame>
 
-              {/* External Android Navigation Bar */}
+              {/* External Floating Navigation Pill (Ultra Modern iOS Style) */}
               {isLocked && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute -bottom-20 left-0 right-0 mx-auto w-[85%] max-w-[280px] h-12 bg-black/80 backdrop-blur-md rounded-full border border-white/10 grid grid-cols-3 items-center justify-items-center shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] z-50 pointer-events-auto"
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto"
                 >
                   <button
                     onClick={() => {
@@ -279,33 +279,28 @@ const ProjectsSection = () => {
                           try {
                             iframe.contentWindow.history.back();
                           } catch (err) {
-                            // CORS bypass attempt: Send a message to the iframe
-                            // Inside Zlunix or your Flutter app, you'd add: 
-                            // window.addEventListener('message', (e) => { if(e.data === 'goBack') window.history.back(); })
                             iframe.contentWindow.postMessage('goBack', '*');
                           }
-                        } else {
-                          console.log("No iframe found to go back.");
                         }
                       } catch (e) {
                         console.log("Cannot go back in cross-origin iframe", e);
                       }
                     }}
-                    className="p-3 text-white/50 hover:text-white transition-colors active:scale-90 rounded-full hover:bg-white/5"
-                    title="Back"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90"
+                    title="Go Back"
                   >
-                    <ChevronLeft size={24} strokeWidth={2.5} />
+                    <ChevronLeft size={22} className="stroke-current mr-0.5" strokeWidth={2.5} />
                   </button>
+
+                  <div className="w-[1px] h-4 bg-white/10 mx-2" />
 
                   <button
                     onClick={() => setActiveAppUrl(null)}
-                    className="p-3 flex items-center justify-center group active:scale-90 transition-transform rounded-full hover:bg-white/5"
-                    title="Home (Close App)"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group"
+                    title="Home Screen"
                   >
-                    <div className="w-4 h-4 rounded-[6px] border-[2px] border-white/50 group-hover:border-white transition-colors shadow-sm" />
+                    <div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" />
                   </button>
-
-                  <div></div>
                 </motion.div>
               )}
             </motion.div>

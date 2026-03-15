@@ -14,16 +14,8 @@ const IPhoneContainer = ({ shouldUnlock, activeAppUrl, onAppOpen, onAppClose, ap
     const [isUnlocked, setIsUnlocked] = useState(false);
 
     useEffect(() => {
-        if (shouldUnlock && !isUnlocked) {
-            // Small delay before unlocking once the phone is in position
-            const timer = setTimeout(() => {
-                setIsUnlocked(true);
-            }, 500);
-            return () => clearTimeout(timer);
-        } else if (!shouldUnlock && isUnlocked) {
-            // Reset lock screen if user scrolls back up
-            setIsUnlocked(false);
-        }
+        // Keep the phone locked constantly since projects are under development
+        setIsUnlocked(false);
     }, [shouldUnlock, isUnlocked]);
 
     return (

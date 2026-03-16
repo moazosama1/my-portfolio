@@ -17,34 +17,46 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      const formattedTime = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Africa/Cairo',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      }).format(new Date());
+      // Using Web3Forms for simpler, reliable form submission.
+      // 1. Go to https://web3forms.com/
+      // 2. Enter your email to get a free Access Key
+      // 3. Paste the Access Key below:
+      const Web3FormsAccessKey = "YOUR_ACCESS_KEY_HERE";
 
-      const templateParams = {
-        name: form.name,
-        email: form.email,
-        message: form.message,
-        time: formattedTime,
-      };
+      if (Web3FormsAccessKey === "YOUR_ACCESS_KEY_HERE") {
+        toast.error("Please add your Web3Forms Access Key in the code first.");
+        setIsSubmitting(false);
+        return;
+      }
 
-      await emailjs.send(
-        'service_contact',
-        'template_contact',
-        templateParams,
-        'cbDRpXPAN1MKnModf'
-      );
-      toast.success("Message sent successfully! I'll get back to you soon.");
-      setForm({ name: "", email: "", message: "" });
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: Web3FormsAccessKey,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          subject: "New Contact Message from Portfolio",
+          from_name: "Portfolio Website",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.status === 200) {
+        toast.success("Message sent successfully! I'll get back to you soon.");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        console.error("Web3Forms error", result);
+        toast.error("Failed to send message. Please try again later.");
+      }
     } catch (error) {
-      console.error("EmailJS Error:", error);
-      toast.error("Failed to send message. Please try again later.");
+      console.error("Form Submit Error:", error);
+      toast.error("Network error. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -63,7 +75,7 @@ const ContactSection = () => {
             </p>
             <div className="space-y-4">
               {[
-                { icon: Mail, text: "www.moazosama525@gmail.com", href: "mailto:www.moazosama525@gmail.com" },
+                { icon: Mail, text: "moaz.osama.dev@gmail.com", href: "mailto:moaz.osama.dev@gmail.com" },
                 { icon: Phone, text: "+201095341166", href: "tel:+201095341166" },
                 { icon: MapPin, text: "Cairo" },
               ].map(({ icon: Icon, text, href }) => {

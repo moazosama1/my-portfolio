@@ -30,6 +30,15 @@ const experiences = [
       "Learned core concepts of OOP, UI building, and widget trees.",
     ],
   },
+  {
+    role: "Computer Science Degree",
+    company: "Higher Technological Institute (HTI)",
+    period: "2022 – 2026",
+    points: [
+      "Pursuing a Bachelor's degree in Computer Science.",
+      "Studying software engineering, algorithms, system design, and advanced programming concepts.",
+    ],
+  },
 ];
 
 const ExperienceSection = () => {

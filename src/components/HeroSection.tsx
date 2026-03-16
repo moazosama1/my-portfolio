@@ -89,7 +89,7 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12"
             >
-              <a href="https://drive.google.com/file/d/13RLAebV9yxgLiWUbEDmoX3UIFpMgtJ5Z/view?usp=drive_link" target="_blank" rel="noopener noreferrer" className="group relative w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-bold transition-all shadow-[0_0_20px_rgba(var(--primary),0.4)] hover:shadow-[0_0_40px_rgba(var(--primary),0.6)] transform hover:-translate-y-1 overflow-hidden">
+              <a href="https://drive.google.com/file/d/1c-V9uQrJedfbeORCQum66QCbm9mC7awa/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="group relative w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-bold transition-all shadow-[0_0_20px_rgba(var(--primary),0.4)] hover:shadow-[0_0_40px_rgba(var(--primary),0.6)] transform hover:-translate-y-1 overflow-hidden">
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <Eye className="w-5 h-5" /> Show CV
                 </span>

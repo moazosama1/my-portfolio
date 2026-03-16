@@ -17,19 +17,29 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
+      const formattedTime = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Africa/Cairo',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }).format(new Date());
+
       const templateParams = {
         name: form.name,
         email: form.email,
         message: form.message,
+        time: formattedTime,
       };
 
       await emailjs.send(
-        'portfolio_service',
+        'service_contact',
         'template_contact',
         templateParams,
-        'LpkQG-tzy5FW17AcN'
+        'cbDRpXPAN1MKnModf'
       );
-
       toast.success("Message sent successfully! I'll get back to you soon.");
       setForm({ name: "", email: "", message: "" });
     } catch (error) {

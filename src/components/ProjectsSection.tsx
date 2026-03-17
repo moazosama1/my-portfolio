@@ -1,14 +1,34 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
-import { ExternalLink, Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List } from "lucide-react";
+import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List, X, Info, ListChecks, Layers } from "lucide-react";
 import PhoneFrame from "./PhoneFrame";
 import IPhoneContainer from "./IPhoneContainer";
 
-const projects = [
+type Project = {
+  title: string;
+  role: string;
+  about: string;
+  features: string[];
+  tags: string[];
+  github: string;
+  web: string;
+  playStore: string;
+  appStore: string;
+  icon: string;
+  url: string;
+};
+
+const projects: Project[] = [
   {
-    title: "Reward Platform",
-    desc: "An end-to-end Flutter rewards ecosystem including a responsive web app, a published mobile app on Google Play, and a web admin dashboard.",
-    tags: ["Flutter", "Clean Architecture", "Cross-platform"],
+    title: "Easy Reward Platform",
+    role: "Freelance Flutter Developer",
+    about: "An end-to-end, production-ready rewards ecosystem designed to boost user engagement with an interactive mobile app and a comprehensive web admin dashboard.",
+    features: [
+      "Cross-platform mobile app for users and responsive web dashboard for admins.",
+      "Automated earn and redeem reward flows with real-time synchronization.",
+      "Published and maintained on Google Play with active user management."
+    ],
+    tags: ["Flutter", "Clean Architecture", "BLoC/Cubit", "REST APIs"],
     github: "",
     web: "https://zlunix.com",
     playStore: "https://play.google.com/store/apps/details?id=com.zlu.nix",
@@ -17,9 +37,16 @@ const projects = [
     url: "https://zlunix.com"
   },
   {
-    title: "Real-Time Tracking System",
-    desc: "Mobile app with background location tracking and offline support, plus an admin dashboard for real-time workforce and shift management.",
-    tags: ["Flutter", "Clean Architecture", "MVI", "Supabase", "ObjectBox"],
+    title: "Enterprise Real-Time Tracking System",
+    role: "Freelance Flutter Developer",
+    about: "A robust workforce management solution with dual applications for employees and managers to handle attendance, shifts, and real-time tracking even in low-connectivity environments.",
+    features: [
+      "Dual-app ecosystem: employee mobile app and manager dashboard.",
+      "Background location tracking with Google Maps integration.",
+      "Offline-first check in/out with automatic sync when online.",
+      "Shift planning, leave requests, and hierarchy management."
+    ],
+    tags: ["Flutter", "Clean Architecture", "MVI", "BLoC/Cubit", "Supabase", "ObjectBox", "Google Maps API"],
     github: "",
     web: "",
     playStore: "",
@@ -28,9 +55,32 @@ const projects = [
     url: ""
   },
   {
-    title: "Flowery E-Commerce",
-    desc: "Tested Flutter e-commerce app featuring secure authentication, order tracking, and Google Maps integration.",
-    tags: ["Flutter", "Cubit", "Provider", "REST APIs"],
+    title: "Super Fitness App",
+    role: "Flutter Developer",
+    about: "A next-generation fitness companion app with an AI coach that generates personalized training plans and responds to health and workout questions in real time.",
+    features: [
+      "Gemini AI powered virtual fitness coach for tailored plans.",
+      "Offline access to workout plans and progress logging.",
+      "Comprehensive unit and widget testing with CI/CD automation."
+    ],
+    tags: ["Flutter", "Clean Architecture", "BLoC", "Gemini AI API", "Retrofit", "ObjectBox", "GitHub Actions"],
+    github: "",
+    web: "",
+    playStore: "",
+    appStore: "",
+    icon: "https://api.dicebear.com/9.x/shapes/svg?seed=fitness",
+    url: ""
+  },
+  {
+    title: "Flowery E-Commerce App",
+    role: "Flutter Developer",
+    about: "A complete e-commerce mobile experience handling browsing, secure authentication, checkout, and real-time order tracking from a single app flow.",
+    features: [
+      "Secure sign in and registration flows.",
+      "Order tracking with map-based location updates.",
+      "Stable cart and session state management."
+    ],
+    tags: ["Flutter", "Clean Architecture", "Cubit/Provider", "REST APIs", "Google Maps"],
     github: "",
     web: "",
     playStore: "",
@@ -39,30 +89,114 @@ const projects = [
     url: ""
   },
   {
-    title: "Online Exam App",
-    desc: "Scalable platform for timed assessments and detailed grading.",
-    tags: ["Flutter", "MVVM", "Cubit", "Dio", "Hive"],
+    title: "Online Exam Platform",
+    role: "Flutter Developer",
+    about: "A scalable educational platform for secure timed assessments, auto submission, and instant result breakdowns while preserving data integrity during unstable connections.",
+    features: [
+      "Precision timers with auto-submit behavior.",
+      "Automated grading with detailed scoring breakdown.",
+      "Secure local cache to prevent exam data loss offline."
+    ],
+    tags: ["Flutter", "Clean Architecture", "MVVM", "Cubit", "Dio", "Hive"],
     github: "",
     web: "https://moazosama1.github.io/online-exam-app/",
     playStore: "",
     appStore: "",
     icon: "https://api.dicebear.com/9.x/shapes/svg?seed=exam",
     url: "https://moazosama1.github.io/online-exam-app/"
-  },
-  {
-    title: "Super Fitness",
-    desc: "Collaborative fitness app with personalized workouts and a Gemini-powered AI coach.",
-    tags: ["Flutter", "BLoC", "Retrofit", "Gemini AI"],
-    github: "",
-    web: "",
-    playStore: "",
-    appStore: "",
-    icon: "https://api.dicebear.com/9.x/shapes/svg?seed=fitness",
-    url: ""
   }
 ];
 
 const springConfig = { stiffness: 100, damping: 30 };
+
+type ProjectCardProps = {
+  proj: Project;
+  isActive: boolean;
+  onCardClick: () => void;
+  onOpenDetails: () => void;
+};
+
+const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCardProps) => (
+  <div
+    onClick={onCardClick}
+    className={`bg-card/40 backdrop-blur-md border ${isActive ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer h-full`}
+  >
+    <div className="flex flex-col h-full">
+      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
+      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.about}</p>
+
+      <div className="flex flex-wrap gap-1.5 mb-5">
+        {proj.tags.map((tag) => (
+          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+        {proj.github && proj.github !== "#" && proj.github !== "" && (
+          <a
+            href={proj.github}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+          >
+            <Github size={14} /> Source
+          </a>
+        )}
+        {proj.web && proj.web !== "#" && proj.web !== "" && (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={proj.web}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+          >
+            <Globe size={14} /> Web
+          </a>
+        )}
+        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={proj.playStore}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+          >
+            <Smartphone size={14} /> Play
+          </a>
+        )}
+        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={proj.appStore}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+          >
+            <Apple size={14} /> App Store
+          </a>
+        )}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenDetails();
+          }}
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+        >
+          Details
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onCardClick();
+          }}
+          className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"
+        >
+          <Play size={14} className="fill-current" /> Run
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -71,6 +205,7 @@ const ProjectsSection = () => {
   const [activeAppUrl, setActiveAppUrl] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'mobile'>('list');
   const [showAll, setShowAll] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const displayedProjects = showAll ? projects : projects.slice(0, viewMode === 'list' ? 3 : 4);
   const leftProjects = displayedProjects.filter((_, i) => i % 2 === 0);
@@ -93,6 +228,19 @@ const ProjectsSection = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedProject(null);
+      }
+    };
+
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [selectedProject]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -184,25 +332,13 @@ const ProjectsSection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.1 }}
-                    onClick={() => openAndScrollToApp(proj.url)}
-                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
                   >
-                    <div className="flex flex-col h-full">
-                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {proj.tags.map((tag) => (
-                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
-                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
-                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
-                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
-                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
-                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
-                      </div>
-                    </div>
+                    <ProjectCard
+                      proj={proj}
+                      isActive={activeAppUrl === proj.url}
+                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      onOpenDetails={() => setSelectedProject(proj)}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -235,25 +371,13 @@ const ProjectsSection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.1 }}
-                    onClick={() => openAndScrollToApp(proj.url)}
-                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
                   >
-                    <div className="flex flex-col h-full">
-                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {proj.tags.map((tag) => (
-                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
-                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
-                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
-                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
-                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
-                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
-                      </div>
-                    </div>
+                    <ProjectCard
+                      proj={proj}
+                      isActive={activeAppUrl === proj.url}
+                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      onOpenDetails={() => setSelectedProject(proj)}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -267,25 +391,13 @@ const ProjectsSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.1 }}
-                    onClick={() => openAndScrollToApp(proj.url)}
-                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary shadow-[0_0_20px_rgba(var(--primary),0.15)]' : 'border-border/50'} rounded-xl p-5 hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
                   >
-                    <div className="flex flex-col h-full">
-                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {proj.tags.map((tag) => (
-                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
-                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
-                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
-                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
-                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
-                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
-                      </div>
-                    </div>
+                    <ProjectCard
+                      proj={proj}
+                      isActive={activeAppUrl === proj.url}
+                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      onOpenDetails={() => setSelectedProject(proj)}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -312,25 +424,13 @@ const ProjectsSection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.1 }}
-                    onClick={() => openAndScrollToApp(proj.url)}
-                    className="bg-card/40 backdrop-blur-md border border-border/50 rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer"
                   >
-                    <div className="flex flex-col h-full">
-                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {proj.tags.map((tag) => (
-                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
-                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
-                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
-                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
-                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
-                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
-                      </div>
-                    </div>
+                    <ProjectCard
+                      proj={proj}
+                      isActive={activeAppUrl === proj.url}
+                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      onOpenDetails={() => setSelectedProject(proj)}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -359,6 +459,124 @@ const ProjectsSection = () => {
                     <button onClick={() => setActiveAppUrl(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group" title="Home Screen"><div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" /></button>
                   </motion.div>
                 )}
+              </motion.div>
+            </div>
+          </div>
+        )}
+
+        {selectedProject && (
+          <div
+            className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm px-4 py-8 md:px-6"
+            onClick={() => setSelectedProject(null)}
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-3xl max-h-[86vh] overflow-y-auto rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+              >
+                <div className="relative p-6 md:p-7 border-b border-border/50 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent">
+                  <div className="pr-12">
+                    <p className="text-[11px] tracking-[0.14em] uppercase text-primary/90 mb-2">Project Details</p>
+                    <h3 className="text-2xl md:text-3xl font-bold font-heading text-foreground leading-tight">{selectedProject.title}</h3>
+                    <p className="text-sm text-foreground/80 mt-2">{selectedProject.role}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProject(null)}
+                    className="absolute top-5 right-5 h-9 w-9 rounded-full border border-border/50 bg-card/70 text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card transition-all duration-200 flex items-center justify-center"
+                    title="Close"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="p-6 md:p-7 space-y-5">
+                  <div className="rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <Info size={15} className="text-primary" />
+                      About Project
+                    </p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{selectedProject.about}</p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <ListChecks size={15} className="text-primary" />
+                      Key Features
+                    </p>
+                    <ul className="list-disc pl-5 text-sm leading-relaxed text-muted-foreground space-y-1.5">
+                      {selectedProject.features.map((feature) => (
+                        <li key={feature}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <Layers size={15} className="text-primary" />
+                      Tech Stack
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.tags.map((tag) => (
+                        <span key={tag} className="text-xs font-mono px-2 py-1 rounded border border-border/50 bg-secondary/50 text-muted-foreground">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-border/50 bg-secondary/20 p-4">
+                    <p className="text-sm font-semibold text-foreground mb-3">Project Links</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.github && selectedProject.github !== "#" && (
+                        <a
+                          href={selectedProject.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+                        >
+                          <Github size={14} /> Source
+                        </a>
+                      )}
+                      {selectedProject.web && selectedProject.web !== "#" && (
+                        <a
+                          href={selectedProject.web}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+                        >
+                          <Globe size={14} /> Web
+                        </a>
+                      )}
+                      {selectedProject.playStore && selectedProject.playStore !== "#" && (
+                        <a
+                          href={selectedProject.playStore}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+                        >
+                          <Smartphone size={14} /> Play Store
+                        </a>
+                      )}
+                      {selectedProject.appStore && selectedProject.appStore !== "#" && (
+                        <a
+                          href={selectedProject.appStore}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+                        >
+                          <Apple size={14} /> App Store
+                        </a>
+                      )}
+                      {!selectedProject.github && !selectedProject.web && !selectedProject.playStore && !selectedProject.appStore && (
+                        <p className="text-sm text-muted-foreground">No public links available for this project.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>

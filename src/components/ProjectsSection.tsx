@@ -43,11 +43,11 @@ const projects = [
     desc: "Scalable platform for timed assessments and detailed grading.",
     tags: ["Flutter", "MVVM", "Cubit", "Dio", "Hive"],
     github: "",
-    web: "",
+    web: "https://moazosama1.github.io/online-exam-app/",
     playStore: "",
     appStore: "",
     icon: "https://api.dicebear.com/9.x/shapes/svg?seed=exam",
-    url: ""
+    url: "https://moazosama1.github.io/online-exam-app/"
   },
   {
     title: "Super Fitness",
@@ -69,10 +69,12 @@ const ProjectsSection = () => {
   const phoneRef = useRef<HTMLDivElement>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [activeAppUrl, setActiveAppUrl] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'mobile'>('list');
   const [showAll, setShowAll] = useState(false);
 
   const displayedProjects = showAll ? projects : projects.slice(0, viewMode === 'list' ? 3 : 4);
+  const leftProjects = displayedProjects.filter((_, i) => i % 2 === 0);
+  const rightProjects = displayedProjects.filter((_, i) => i % 2 !== 0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -159,153 +161,208 @@ const ProjectsSection = () => {
             >
               <LayoutGrid size={18} />
             </button>
+            <button
+              onClick={() => setViewMode('mobile')}
+              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'mobile' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+              title="Mobile Split View"
+            >
+              <Smartphone size={18} />
+            </button>
           </div>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-          {/* Project cards */}
-          <div className="w-full lg:w-1/2 flex flex-col">
-            <div className={`w-full ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4 items-start content-start' : 'space-y-4'}`}>
-              {displayedProjects.map((proj, i) => (
+        {viewMode === 'mobile' ? (
+          /* ===== MOBILE SPLIT VIEW: Phone center, cards left & right ===== */
+          <div className="flex flex-col items-center">
+            <div className="flex flex-col xl:flex-row items-center xl:items-start justify-center gap-12 xl:gap-10 w-full">
+              {/* Left Column */}
+              <div className="hidden xl:flex flex-col gap-4 w-full max-w-[420px]">
+                {leftProjects.map((proj, i) => (
+                  <motion.div
+                    key={`left-${proj.title}`}
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    onClick={() => openAndScrollToApp(proj.url)}
+                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
+                  >
+                    <div className="flex flex-col h-full">
+                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {proj.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
+                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
+                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
+                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
+                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Central Phone */}
+              <div ref={phoneRef} className="relative z-20 flex-shrink-0" style={{ perspective: "1200px" }}>
                 <motion.div
-                  key={proj.title}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  onClick={() => openAndScrollToApp(proj.url)}
-                  className="bg-card/40 backdrop-blur-md border border-border/50 rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer"
+                  style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
+                  className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
                 >
-                  <div className="flex flex-col h-full">
-                    <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {proj.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
-
-                    <div className="flex flex-wrap gap-1.5 mb-5">
-                      {proj.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">
-                          {tag}
-                        </span>
-                      ))}
-                      {proj.tags.length > 3 && (
-                        <span className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">
-                          +{proj.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
-                      {proj.github && proj.github !== "#" && proj.github !== "" && (
-                        <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
-                          <Github size={14} /> Source
-                        </a>
-                      )}
-                      {proj.web && proj.web !== "#" && proj.web !== "" && (
-                        <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
-                          <Globe size={14} /> Web
-                        </a>
-                      )}
-                      {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && (
-                        <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
-                          <Smartphone size={14} /> Play Store
-                        </a>
-                      )}
-                      {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && (
-                        <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300">
-                          <Apple size={14} /> App Store
-                        </a>
-                      )}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }}
-                        className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"
-                      >
-                        <Play size={14} className="fill-current" /> Run
-                      </button>
-                    </div>
-                  </div>
+                  <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
+                    <IPhoneContainer shouldUnlock={isLocked} activeAppUrl={activeAppUrl} onAppOpen={setActiveAppUrl} onAppClose={() => setActiveAppUrl(null)} apps={projects} />
+                  </PhoneFrame>
+                  {isLocked && (
+                    <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto">
+                      <button onClick={() => { try { const iframe = document.querySelector('iframe'); if (iframe && iframe.contentWindow) { try { iframe.contentWindow.history.back(); } catch (err) { iframe.contentWindow.postMessage('goBack', '*'); } } } catch (e) { console.log("Cannot go back", e); } }} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90" title="Go Back"><ChevronLeft size={22} strokeWidth={2.5} /></button>
+                      <div className="w-[1px] h-4 bg-white/10 mx-2" />
+                      <button onClick={() => setActiveAppUrl(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group" title="Home Screen"><div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" /></button>
+                    </motion.div>
+                  )}
                 </motion.div>
-              ))}
+              </div>
+
+              {/* Right Column */}
+              <div className="hidden xl:flex flex-col gap-4 w-full max-w-[420px]">
+                {rightProjects.map((proj, i) => (
+                  <motion.div
+                    key={`right-${proj.title}`}
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    onClick={() => openAndScrollToApp(proj.url)}
+                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
+                  >
+                    <div className="flex flex-col h-full">
+                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {proj.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
+                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
+                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
+                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
+                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Cards for smaller screens (below xl) in mobile mode — standard grid */}
+              <div className="xl:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                {displayedProjects.map((proj, i) => (
+                  <motion.div
+                    key={`mobile-sm-${proj.title}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    onClick={() => openAndScrollToApp(proj.url)}
+                    className={`bg-card/40 backdrop-blur-md border ${activeAppUrl === proj.url ? 'border-primary shadow-[0_0_20px_rgba(var(--primary),0.15)]' : 'border-border/50'} rounded-xl p-5 hover:border-primary/40 transition-all duration-500 group cursor-pointer`}
+                  >
+                    <div className="flex flex-col h-full">
+                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {proj.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
+                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
+                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
+                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
+                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
 
-            {!showAll && projects.length > (viewMode === 'list' ? 3 : 4) && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-center mt-6"
-              >
-                <button
-                  onClick={() => setShowAll(true)}
-                  className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm"
-                >
-                  Show More Projects
+            {/* Load More / Show Less — bottom center */}
+            {projects.length > 4 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full flex justify-center mt-16">
+                <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
+                  {showAll ? 'Show Less' : 'Show More Projects'}
                 </button>
               </motion.div>
             )}
           </div>
-
-          {/* Sticky phone */}
-          <div ref={phoneRef} className="w-full lg:w-1/2 flex justify-center lg:sticky lg:top-32 lg:self-start h-fit" style={{ perspective: "1200px" }}>
-            <motion.div
-              style={
-                isLocked
-                  ? { rotateX: 0, scale: 1, y: 0 }
-                  : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }
-              }
-              className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
-            >
-              <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
-                <IPhoneContainer
-                  shouldUnlock={isLocked}
-                  activeAppUrl={activeAppUrl}
-                  onAppOpen={setActiveAppUrl}
-                  onAppClose={() => setActiveAppUrl(null)}
-                  apps={projects}
-                />
-              </PhoneFrame>
-
-              {/* External Floating Navigation Pill (Ultra Modern iOS Style) */}
-              {isLocked && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto"
-                >
-                  <button
-                    onClick={() => {
-                      try {
-                        const iframe = document.querySelector('iframe');
-                        if (iframe && iframe.contentWindow) {
-                          try {
-                            iframe.contentWindow.history.back();
-                          } catch (err) {
-                            iframe.contentWindow.postMessage('goBack', '*');
-                          }
-                        }
-                      } catch (e) {
-                        console.log("Cannot go back in cross-origin iframe", e);
-                      }
-                    }}
-                    className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90"
-                    title="Go Back"
+        ) : (
+          /* ===== LIST / GRID VIEW ===== */
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            <div className="w-full lg:w-1/2 flex flex-col order-2 lg:order-1">
+              <div className={`w-full ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4 items-start content-start' : 'space-y-4'}`}>
+                {displayedProjects.map((proj, i) => (
+                  <motion.div
+                    key={`${viewMode}-${proj.title}`}
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    onClick={() => openAndScrollToApp(proj.url)}
+                    className="bg-card/40 backdrop-blur-md border border-border/50 rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer"
                   >
-                    <ChevronLeft size={22} className="stroke-current mr-0.5" strokeWidth={2.5} />
-                  </button>
+                    <div className="flex flex-col h-full">
+                      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.desc}</p>
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {proj.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+                        {proj.github && proj.github !== "#" && proj.github !== "" && <a href={proj.github} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Github size={14} /> Source</a>}
+                        {proj.web && proj.web !== "#" && proj.web !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.web} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Globe size={14} /> Web</a>}
+                        {proj.playStore && proj.playStore !== "#" && proj.playStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.playStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Smartphone size={14} /> Play</a>}
+                        {proj.appStore && proj.appStore !== "#" && proj.appStore !== "" && <a target="_blank" rel="noopener noreferrer" href={proj.appStore} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"><Apple size={14} /> App Store</a>}
+                        <button onClick={(e) => { e.stopPropagation(); openAndScrollToApp(proj.url); }} className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"><Play size={14} className="fill-current" /> Run</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
 
-                  <div className="w-[1px] h-4 bg-white/10 mx-2" />
-
-                  <button
-                    onClick={() => setActiveAppUrl(null)}
-                    className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group"
-                    title="Home Screen"
-                  >
-                    <div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" />
+              {projects.length > (viewMode === 'list' ? 3 : 4) && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center mt-8">
+                  <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
+                    {showAll ? 'Show Less' : 'Show More Projects'}
                   </button>
                 </motion.div>
               )}
-            </motion.div>
+            </div>
+
+            <div ref={phoneRef} className="w-full lg:w-1/2 lg:sticky lg:top-32 lg:self-start flex justify-center h-fit order-1 lg:order-2" style={{ perspective: "1200px" }}>
+              <motion.div
+                style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
+                className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
+              >
+                <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
+                  <IPhoneContainer shouldUnlock={isLocked} activeAppUrl={activeAppUrl} onAppOpen={setActiveAppUrl} onAppClose={() => setActiveAppUrl(null)} apps={projects} />
+                </PhoneFrame>
+                {isLocked && (
+                  <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto">
+                    <button onClick={() => { try { const iframe = document.querySelector('iframe'); if (iframe && iframe.contentWindow) { try { iframe.contentWindow.history.back(); } catch (err) { iframe.contentWindow.postMessage('goBack', '*'); } } } catch (e) { console.log("Cannot go back", e); } }} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90" title="Go Back"><ChevronLeft size={22} strokeWidth={2.5} /></button>
+                    <div className="w-[1px] h-4 bg-white/10 mx-2" />
+                    <button onClick={() => setActiveAppUrl(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group" title="Home Screen"><div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" /></button>
+                  </motion.div>
+                )}
+              </motion.div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

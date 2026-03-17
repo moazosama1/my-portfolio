@@ -112,26 +112,39 @@ const IPhoneHomeScreen = ({ activeAppUrl: externalAppUrl, onAppOpen, onAppClose,
                     }`}
             >
                 {activeAppUrl != null && (
-                    <div className="flex-1 w-full bg-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
-                        {/* Background subtle elements */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-background z-0" />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/20 rounded-full blur-3xl z-0" />
-                        
-                        {/* Content */}
-                        <div className="relative z-10 flex flex-col items-center justify-center p-6 text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(var(--primary),0.3)] backdrop-blur-sm">
-                                <Lock className="w-8 h-8 text-white/80" />
+                    <div className="flex-1 w-full bg-slate-900 flex flex-col relative overflow-hidden">
+                        {/* Only show iframe if it's a real URL, else show Locked Overlay */}
+                        {activeAppUrl && activeAppUrl !== "" && activeAppUrl !== "#" ? (
+                            <iframe
+                                src={activeAppUrl}
+                                className="w-full h-full border-0 bg-white"
+                                title="App Preview"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                            />
+                        ) : (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+                                {/* Background subtle elements */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-background z-0" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/20 rounded-full blur-3xl z-0" />
+                                
+                                {/* Content */}
+                                <div className="relative z-10 flex flex-col items-center justify-center">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(var(--primary),0.3)] backdrop-blur-sm">
+                                        <Lock className="w-8 h-8 text-white/80" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-3">Authentication Required</h3>
+                                    <p className="text-sm text-white/60 leading-relaxed mb-8 px-4">
+                                        This project is currently under active development. Live preview will be available soon.
+                                    </p>
+                                    
+                                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                                        <div className="h-full bg-primary w-2/3 animate-[pulse_2s_ease-in-out_infinite]" />
+                                    </div>
+                                    <span className="text-[10px] text-white/40 mt-3 uppercase tracking-widest">Work in Progress</span>
+                                </div>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Authentication Required</h3>
-                            <p className="text-sm text-white/60 leading-relaxed mb-8 px-4">
-                                This project is currently under active development. Live preview will be available soon.
-                            </p>
-                            
-                            <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-primary w-2/3 animate-[pulse_2s_ease-in-out_infinite]" />
-                            </div>
-                            <span className="text-[10px] text-white/40 mt-3 uppercase tracking-widest">Work in Progress</span>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>

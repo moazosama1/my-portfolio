@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
-import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List, X, Info, ListChecks, Layers } from "lucide-react";
+import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List, X, Info, ListChecks, Layers, MonitorSmartphone } from "lucide-react";
 import PhoneFrame from "./PhoneFrame";
 import IPhoneContainer from "./IPhoneContainer";
+import WebFrame from "./WebFrame";
 
 type Project = {
   title: string;
@@ -203,13 +204,35 @@ const ProjectsSection = () => {
   const phoneRef = useRef<HTMLDivElement>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [activeAppUrl, setActiveAppUrl] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'mobile'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'mobile' | 'web'>('list');
   const [showAll, setShowAll] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const displayedProjects = showAll ? projects : projects.slice(0, viewMode === 'list' ? 3 : 4);
+  const webEnabledProjects = projects.filter(
+    (project) => project.title === "Easy Reward Platform" && project.web && project.web !== "#"
+  );
+
+  const projectsForCurrentView = viewMode === 'web' ? webEnabledProjects : projects;
+
+  const displayedProjects = showAll
+    ? projectsForCurrentView
+    : projectsForCurrentView.slice(0, viewMode === 'list' ? 3 : 4);
   const leftProjects = displayedProjects.filter((_, i) => i % 2 === 0);
   const rightProjects = displayedProjects.filter((_, i) => i % 2 !== 0);
+
+  const getProjectPreviewUrl = (project: Project) => {
+    if (viewMode === 'web') return project.web || "";
+    return project.url || project.web || "";
+  };
+
+  useEffect(() => {
+    if (viewMode !== 'web') return;
+
+    const activeIsValidWebProject = webEnabledProjects.some((project) => project.web === activeAppUrl);
+    if (!activeIsValidWebProject) {
+      setActiveAppUrl(webEnabledProjects[0]?.web || null);
+    }
+  }, [viewMode, activeAppUrl, webEnabledProjects]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -316,6 +339,15 @@ const ProjectsSection = () => {
             >
               <Smartphone size={18} />
             </button>
+            {webEnabledProjects.length > 0 && (
+              <button
+                onClick={() => setViewMode('web')}
+                className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'web' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                title="Web Preview View"
+              >
+                <MonitorSmartphone size={18} />
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -335,8 +367,8 @@ const ProjectsSection = () => {
                   >
                     <ProjectCard
                       proj={proj}
-                      isActive={activeAppUrl === proj.url}
-                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      isActive={activeAppUrl === getProjectPreviewUrl(proj)}
+                      onCardClick={() => openAndScrollToApp(getProjectPreviewUrl(proj))}
                       onOpenDetails={() => setSelectedProject(proj)}
                     />
                   </motion.div>
@@ -374,8 +406,8 @@ const ProjectsSection = () => {
                   >
                     <ProjectCard
                       proj={proj}
-                      isActive={activeAppUrl === proj.url}
-                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      isActive={activeAppUrl === getProjectPreviewUrl(proj)}
+                      onCardClick={() => openAndScrollToApp(getProjectPreviewUrl(proj))}
                       onOpenDetails={() => setSelectedProject(proj)}
                     />
                   </motion.div>
@@ -394,8 +426,8 @@ const ProjectsSection = () => {
                   >
                     <ProjectCard
                       proj={proj}
-                      isActive={activeAppUrl === proj.url}
-                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      isActive={activeAppUrl === getProjectPreviewUrl(proj)}
+                      onCardClick={() => openAndScrollToApp(getProjectPreviewUrl(proj))}
                       onOpenDetails={() => setSelectedProject(proj)}
                     />
                   </motion.div>
@@ -404,7 +436,7 @@ const ProjectsSection = () => {
             </div>
 
             {/* Load More / Show Less — bottom center */}
-            {projects.length > 4 && (
+            {projectsForCurrentView.length > 4 && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full flex justify-center mt-16">
                 <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
                   {showAll ? 'Show Less' : 'Show More Projects'}
@@ -415,7 +447,7 @@ const ProjectsSection = () => {
         ) : (
           /* ===== LIST / GRID VIEW ===== */
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-            <div className="w-full lg:w-1/2 flex flex-col order-2 lg:order-1">
+            <div className={`w-full ${viewMode === 'web' ? 'lg:w-[40%]' : 'lg:w-1/2'} flex flex-col order-2 lg:order-1`}>
               <div className={`w-full ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4 items-start content-start' : 'space-y-4'}`}>
                 {displayedProjects.map((proj, i) => (
                   <motion.div
@@ -427,15 +459,15 @@ const ProjectsSection = () => {
                   >
                     <ProjectCard
                       proj={proj}
-                      isActive={activeAppUrl === proj.url}
-                      onCardClick={() => openAndScrollToApp(proj.url)}
+                      isActive={activeAppUrl === getProjectPreviewUrl(proj)}
+                      onCardClick={() => openAndScrollToApp(getProjectPreviewUrl(proj))}
                       onOpenDetails={() => setSelectedProject(proj)}
                     />
                   </motion.div>
                 ))}
               </div>
 
-              {projects.length > (viewMode === 'list' ? 3 : 4) && (
+              {projectsForCurrentView.length > (viewMode === 'list' ? 3 : 4) && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center mt-8">
                   <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
                     {showAll ? 'Show Less' : 'Show More Projects'}
@@ -444,22 +476,34 @@ const ProjectsSection = () => {
               )}
             </div>
 
-            <div ref={phoneRef} className="w-full lg:w-1/2 lg:sticky lg:top-32 lg:self-start flex justify-center h-fit order-1 lg:order-2" style={{ perspective: "1200px" }}>
-              <motion.div
-                style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
-                className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
-              >
-                <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
-                  <IPhoneContainer shouldUnlock={isLocked} activeAppUrl={activeAppUrl} onAppOpen={setActiveAppUrl} onAppClose={() => setActiveAppUrl(null)} apps={projects} />
-                </PhoneFrame>
-                {isLocked && (
-                  <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto">
-                    <button onClick={() => { try { const iframe = document.querySelector('iframe'); if (iframe && iframe.contentWindow) { try { iframe.contentWindow.history.back(); } catch (err) { iframe.contentWindow.postMessage('goBack', '*'); } } } catch (e) { console.log("Cannot go back", e); } }} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90" title="Go Back"><ChevronLeft size={22} strokeWidth={2.5} /></button>
-                    <div className="w-[1px] h-4 bg-white/10 mx-2" />
-                    <button onClick={() => setActiveAppUrl(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group" title="Home Screen"><div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" /></button>
-                  </motion.div>
-                )}
-              </motion.div>
+            <div ref={phoneRef} className={`w-full ${viewMode === 'web' ? 'lg:w-[60%]' : 'lg:w-1/2'} lg:sticky lg:top-32 lg:self-start flex justify-center h-fit order-1 lg:order-2`} style={{ perspective: "1200px" }}>
+              {viewMode === 'web' ? (
+                <motion.div
+                  style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
+                  className="w-full max-w-[980px]"
+                >
+                  <WebFrame
+                    activeUrl={activeAppUrl}
+                    onReload={() => setActiveAppUrl((url) => (url ? `${url}${url.includes('?') ? '&' : '?'}r=${Date.now()}` : url))}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
+                  className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
+                >
+                  <PhoneFrame interactive={isLocked} isLocked={isLocked} glowIntensity={isLocked ? 1 : 0.5}>
+                    <IPhoneContainer shouldUnlock={isLocked} activeAppUrl={activeAppUrl} onAppOpen={setActiveAppUrl} onAppClose={() => setActiveAppUrl(null)} apps={projects} />
+                  </PhoneFrame>
+                  {isLocked && (
+                    <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="absolute -bottom-14 left-0 right-0 mx-auto w-fit px-2.5 h-[52px] bg-black/70 backdrop-blur-2xl rounded-full border border-white/10 flex items-center justify-center shadow-[0_15px_40px_-5px_rgba(0,0,0,0.8)] z-50 pointer-events-auto">
+                      <button onClick={() => { try { const iframe = document.querySelector('iframe'); if (iframe && iframe.contentWindow) { try { iframe.contentWindow.history.back(); } catch (err) { iframe.contentWindow.postMessage('goBack', '*'); } } } catch (e) { console.log("Cannot go back", e); } }} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90" title="Go Back"><ChevronLeft size={22} strokeWidth={2.5} /></button>
+                      <div className="w-[1px] h-4 bg-white/10 mx-2" />
+                      <button onClick={() => setActiveAppUrl(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-90 group" title="Home Screen"><div className="w-[18px] h-[18px] border-[2.5px] border-current rounded-[6px] group-hover:scale-95 transition-transform" /></button>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
             </div>
           </div>
         )}

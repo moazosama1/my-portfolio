@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, Send, Loader2 } from "lucide-react";
+import { Mail, MapPin, Phone, Send, Loader2, Github } from "lucide-react";
 import { useState } from "react";
 import emailjs from '@emailjs/browser';
 import { toast } from "sonner";
@@ -77,6 +77,7 @@ const ContactSection = () => {
               {[
                 { icon: Mail, text: "moaz.osama.dev@gmail.com", href: "mailto:moaz.osama.dev@gmail.com" },
                 { icon: Phone, text: "+201095341166", href: "tel:+201095341166" },
+                { icon: Github, text: "GitHub", href: "https://github.com/moazosama1" },
                 { icon: MapPin, text: "Cairo" },
               ].map(({ icon: Icon, text, href }) => {
                 const innerContent = (

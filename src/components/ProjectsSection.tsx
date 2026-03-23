@@ -65,12 +65,12 @@ const projects: Project[] = [
       "Comprehensive unit and widget testing with CI/CD automation."
     ],
     tags: ["Flutter", "Clean Architecture", "BLoC", "Gemini AI API", "Retrofit", "ObjectBox", "GitHub Actions"],
-    github: "",
+    github: "https://github.com/mohamedna3eem/elevate_Super_Fitness",
     web: "",
     playStore: "",
     appStore: "",
     icon: "https://api.dicebear.com/9.x/shapes/svg?seed=fitness",
-    url: ""
+    url: "https://moazosama1.github.io/Fitness-app/"
   },
   {
     title: "Flowery E-Commerce App",
@@ -99,7 +99,7 @@ const projects: Project[] = [
       "Secure local cache to prevent exam data loss offline."
     ],
     tags: ["Flutter", "Clean Architecture", "MVVM", "Cubit", "Dio", "Hive"],
-    github: "",
+    github: "https://github.com/AhmedNasser1999/exam_app",
     web: "https://moazosama1.github.io/online-exam-app/",
     playStore: "",
     appStore: "",
@@ -142,7 +142,7 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             <Github size={14} /> Source
           </a>
         )}
-        {proj.web && proj.web !== "#" && proj.web !== "" && (
+        {proj.web && proj.web !== "#" && proj.web !== "" && proj.title !== "Online Exam Platform" && (
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -214,16 +214,22 @@ const ProjectsSection = () => {
 
   const projectsForCurrentView = viewMode === 'web' ? webEnabledProjects : projects;
 
-  const displayedProjects = showAll
-    ? projectsForCurrentView
-    : projectsForCurrentView.slice(0, viewMode === 'list' ? 3 : 4);
-  const leftProjects = displayedProjects.filter((_, i) => i % 2 === 0);
-  const rightProjects = displayedProjects.filter((_, i) => i % 2 !== 0);
-
   const getProjectPreviewUrl = (project: Project) => {
     if (viewMode === 'web') return project.web || "";
     return project.url || project.web || "";
   };
+
+  const sortedProjectsForCurrentView = [...projectsForCurrentView].sort((a, b) => {
+    const aHasPreview = Boolean(getProjectPreviewUrl(a));
+    const bHasPreview = Boolean(getProjectPreviewUrl(b));
+    return Number(bHasPreview) - Number(aHasPreview);
+  });
+
+  const displayedProjects = showAll
+    ? sortedProjectsForCurrentView
+    : sortedProjectsForCurrentView.slice(0, viewMode === 'list' ? 3 : 4);
+  const leftProjects = displayedProjects.filter((_, i) => i % 2 === 0);
+  const rightProjects = displayedProjects.filter((_, i) => i % 2 !== 0);
 
   useEffect(() => {
     if (viewMode !== 'web') return;
@@ -436,7 +442,7 @@ const ProjectsSection = () => {
             </div>
 
             {/* Load More / Show Less — bottom center */}
-            {projectsForCurrentView.length > 4 && (
+            {sortedProjectsForCurrentView.length > 4 && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full flex justify-center mt-16">
                 <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
                   {showAll ? 'Show Less' : 'Show More Projects'}
@@ -467,7 +473,7 @@ const ProjectsSection = () => {
                 ))}
               </div>
 
-              {projectsForCurrentView.length > (viewMode === 'list' ? 3 : 4) && (
+              {sortedProjectsForCurrentView.length > (viewMode === 'list' ? 3 : 4) && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center mt-8">
                   <button onClick={() => setShowAll(!showAll)} className="px-6 py-2.5 rounded-full bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm">
                     {showAll ? 'Show Less' : 'Show More Projects'}

@@ -108,7 +108,7 @@ const HeroSection = () => {
               className="flex flex-wrap items-center justify-center lg:justify-start gap-3 w-full sm:w-auto mb-8"
             >
               <a
-                href="https://drive.google.com/file/d/1c-V9uQrJedfbeORCQum66QCbm9mC7awa/view?usp=sharing"
+                href="https://drive.google.com/file/d/1eT6FPISKWzxGHsdMh5utTe8iE2ZB6OwB/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-bold text-xs sm:text-sm transition-all shadow-[0_0_20px_rgba(var(--primary),0.35)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transform hover:-translate-y-0.5 overflow-hidden flex items-center justify-center gap-2"

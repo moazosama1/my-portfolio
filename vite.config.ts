@@ -19,4 +19,5 @@ export default defineConfig(({ mode }) => ({
     },
   },
   base: '/my-portfolio/',
+  assetsInclude: ['**/*.JPEG'],
 }));

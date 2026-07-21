@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
-import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List, X, Info, ListChecks, Layers, MonitorSmartphone } from "lucide-react";
+import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, List, X, Info, ListChecks, Layers, MonitorSmartphone, Gift, Store, MapPin, Dumbbell, Flower2, GraduationCap, Music, Sparkles } from "lucide-react";
 import PhoneFrame from "./PhoneFrame";
 import IPhoneContainer from "./IPhoneContainer";
 import WebFrame from "./WebFrame";
@@ -17,6 +17,18 @@ type Project = {
   appStore: string;
   icon: string;
   url: string;
+};
+
+const getProjectIcon = (title: string) => {
+  const t = title.toLowerCase();
+  if (t.includes("reward")) return Gift;
+  if (t.includes("dahab") || t.includes("store") || t.includes("sales")) return Store;
+  if (t.includes("tracking") || t.includes("real-time")) return MapPin;
+  if (t.includes("fitness")) return Dumbbell;
+  if (t.includes("flowery")) return Flower2;
+  if (t.includes("exam")) return GraduationCap;
+  if (t.includes("mood") || t.includes("music")) return Music;
+  return Sparkles;
 };
 
 const projects: Project[] = [
@@ -36,6 +48,23 @@ const projects: Project[] = [
     appStore: "",
     icon: "https://api.dicebear.com/9.x/shapes/svg?seed=rp",
     url: "https://zlunix.com"
+  },
+  {
+    title: "Dahab Store – Sales Management System",
+    role: "Flutter & Supabase Engineer",
+    about: "A production-grade Flutter Windows desktop application for retail operations, handling multi-currency sales, inventory, suppliers, and daily cash closing with PDF/Excel reporting. Engineered the backend and data layer using Supabase (PostgreSQL, Auth, Realtime, RLS) within a Clean Architecture/MVI (Cubit) structure, ensuring real-time sync and role-based data security.",
+    features: [
+      "Multi-currency sales, inventory, and supplier management.",
+      "Daily cash closing with automated PDF & Excel reporting.",
+      "Real-time data sync and RLS role-based security via Supabase."
+    ],
+    tags: ["Flutter", "Windows Desktop", "Clean Architecture", "MVI", "Cubit", "Supabase", "PostgreSQL", "PDF/Excel Reports"],
+    github: "https://github.com/moazosama1/Dahab-Store-Sales-Systeam",
+    web: "",
+    playStore: "",
+    appStore: "",
+    icon: "https://api.dicebear.com/9.x/shapes/svg?seed=dahabstore",
+    url: ""
   },
   {
     title: "Enterprise Real-Time Tracking System",
@@ -105,6 +134,23 @@ const projects: Project[] = [
     appStore: "",
     icon: "https://api.dicebear.com/9.x/shapes/svg?seed=exam",
     url: "https://moazosama1.github.io/online-exam-app/"
+  },
+  {
+    title: "Mood-On – AI Mood & Music Companion",
+    role: "Flutter & AI Engineer",
+    about: "An AI-powered Flutter app that detects the user's mood and recommends music accordingly, with AI companion chat and mood history tracking. Built with Clean Architecture/MVI (Cubit), ObjectBox for offline-first storage, GoRouter, and Firebase AI (Gemini) integration.",
+    features: [
+      "AI-powered mood detection and personalized music recommendation.",
+      "Interactive AI companion chat for emotional support & mood tracking.",
+      "Offline-first history storage powered by ObjectBox and GoRouter navigation."
+    ],
+    tags: ["Flutter", "Clean Architecture", "MVI / Cubit", "Firebase AI (Gemini)", "ObjectBox", "GoRouter"],
+    github: "https://github.com/youssefmdev22/mood_on_public",
+    web: "",
+    playStore: "",
+    appStore: "",
+    icon: "https://api.dicebear.com/9.x/shapes/svg?seed=moodon",
+    url: ""
   }
 ];
 
@@ -117,27 +163,78 @@ type ProjectCardProps = {
   onOpenDetails: () => void;
 };
 
-const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCardProps) => (
-  <div
-    onClick={onCardClick}
-    className={`bg-card/40 backdrop-blur-md border ${isActive ? 'border-primary ring-1 ring-primary/20 shadow-[0_0_25px_rgba(var(--primary),0.1)]' : 'border-border/50'} rounded-xl p-5 hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] hover:border-primary/40 transition-all duration-500 group cursor-pointer h-full`}
-  >
-    <div className="flex flex-col h-full">
-      <h3 className="text-lg md:text-xl font-bold font-heading text-foreground mb-2 group-hover:text-primary transition-colors">{proj.title}</h3>
-      <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">{proj.about}</p>
+const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCardProps) => {
+  const IconComponent = getProjectIcon(proj.title);
+  return (
+    <div
+      onClick={onCardClick}
+      className={`group relative bg-card/60 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 cursor-pointer h-full flex flex-col justify-between overflow-hidden shadow-md ${
+        isActive
+          ? "border-primary ring-2 ring-primary/30 shadow-[0_12px_35px_rgba(var(--primary),0.25)] bg-card/80"
+          : "border-border/60 hover:border-primary/50 hover:shadow-[0_12px_35px_rgba(var(--primary),0.18)] hover:-translate-y-1"
+      }`}
+    >
+      {/* Background Ambient Glow */}
+      <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
 
-      <div className="flex flex-wrap gap-1.5 mb-5">
-        {proj.tags.map((tag) => (
-          <span key={tag} className="text-[10px] md:text-xs font-mono px-2 py-0.5 rounded border border-border/50 bg-secondary/50 text-muted-foreground">{tag}</span>
+      <div className="flex flex-col h-full relative z-10">
+        {/* Top Header: Icon & Role Badge */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary shadow-xs shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+              <IconComponent size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg md:text-xl font-bold font-heading text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
+                {proj.title}
+              </h3>
+              {proj.role && (
+                <span className="text-[11px] font-mono text-muted-foreground">
+                  {proj.role}
+                </span>
+              )}
+            </div>
+          </div>
+
+        {/* Active / Running Indicator Badge */}
+        {isActive && (
+          <span className="flex items-center gap-1.5 text-[10px] font-bold font-mono px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            Active
+          </span>
+        )}
+      </div>
+
+      {/* About Description */}
+      <p className="text-muted-foreground text-xs sm:text-sm mb-5 leading-relaxed line-clamp-3 font-sans">
+        {proj.about}
+      </p>
+
+      {/* Tech Tags */}
+      <div className="flex flex-wrap gap-1.5 mb-6">
+        {proj.tags.map((tag, idx) => (
+          <span
+            key={tag}
+            className={`text-[10px] sm:text-xs font-mono font-medium px-2.5 py-1 rounded-lg border transition-colors ${
+              idx === 0
+                ? "bg-primary/10 border-primary/20 text-primary"
+                : "bg-secondary/60 border-border/50 text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tag}
+          </span>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50">
+      {/* Bottom Actions Row */}
+      <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-border/40">
         {proj.github && proj.github !== "#" && proj.github !== "" && (
           <a
             href={proj.github}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-secondary/80 border border-border/50 text-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-200"
           >
             <Github size={14} /> Source
           </a>
@@ -148,7 +245,7 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             rel="noopener noreferrer"
             href={proj.web}
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-secondary/80 border border-border/50 text-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-200"
           >
             <Globe size={14} /> Web
           </a>
@@ -159,7 +256,7 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             rel="noopener noreferrer"
             href={proj.playStore}
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-secondary/80 border border-border/50 text-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-200"
           >
             <Smartphone size={14} /> Play
           </a>
@@ -170,7 +267,7 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             rel="noopener noreferrer"
             href={proj.appStore}
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-secondary/80 border border-border/50 text-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-200"
           >
             <Apple size={14} /> App Store
           </a>
@@ -181,7 +278,7 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             e.stopPropagation();
             onOpenDetails();
           }}
-          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-primary transition-all duration-300"
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-secondary/80 border border-border/50 text-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-200"
         >
           Details
         </button>
@@ -190,14 +287,19 @@ const ProjectCard = ({ proj, isActive, onCardClick, onOpenDetails }: ProjectCard
             e.stopPropagation();
             onCardClick();
           }}
-          className="flex items-center gap-1.5 text-xs font-medium px-4 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_0_10px_rgba(var(--primary),0.3)] transition-all duration-300 ml-auto"
+          className={`flex items-center gap-1.5 text-xs font-bold px-4 py-1.5 rounded-xl transition-all duration-300 ml-auto shadow-sm ${
+            isActive
+              ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-primary/30"
+              : "bg-primary/15 text-primary border border-primary/30 hover:bg-primary hover:text-primary-foreground hover:shadow-md"
+          }`}
         >
-          <Play size={14} className="fill-current" /> Run
+          <Play size={13} className="fill-current" /> {isActive ? "Running" : "Run"}
         </button>
       </div>
     </div>
   </div>
 );
+};
 
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -205,7 +307,7 @@ const ProjectsSection = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [activeAppUrl, setActiveAppUrl] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'mobile' | 'web'>('list');
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const webEnabledProjects = projects.filter(
@@ -309,49 +411,64 @@ const ProjectsSection = () => {
   };
 
   return (
-    <section id="projects" ref={sectionRef} className="relative py-24 overflow-hidden">
+    <section id="projects" ref={sectionRef} className="relative py-16 overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
+        {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-8"
         >
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-2 text-gradient">Projects</h2>
-            <div className="w-16 h-1 bg-gradient-primary rounded-full" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold tracking-wider uppercase mb-3">
+            <Sparkles size={13} /> Portfolio Showcase
           </div>
+          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-3 text-foreground tracking-tight">
+            Featured <span className="text-gradient">Projects</span>
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base font-mono">
+            Production apps, enterprise desktop systems & open-source mobile solutions.
+          </p>
+        </motion.div>
 
-          <div className="flex bg-card/50 backdrop-blur-sm border border-border/50 p-1 rounded-lg w-fit shrink-0">
+        {/* View Switcher Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex justify-center mb-10"
+        >
+          <div className="flex items-center justify-center bg-card/60 backdrop-blur-md border border-border/50 p-1.5 rounded-2xl w-fit shadow-sm">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'list' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+              className={`px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-mono font-medium transition-all duration-300 ${viewMode === 'list' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
               title="List View"
             >
-              <List size={18} />
+              <List size={16} /> List
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'grid' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+              className={`px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-mono font-medium transition-all duration-300 ${viewMode === 'grid' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
               title="Grid View"
             >
-              <LayoutGrid size={18} />
+              <LayoutGrid size={16} /> Grid
             </button>
             <button
               onClick={() => setViewMode('mobile')}
-              className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'mobile' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+              className={`px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-mono font-medium transition-all duration-300 ${viewMode === 'mobile' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
               title="Mobile Split View"
             >
-              <Smartphone size={18} />
+              <Smartphone size={16} /> Split
             </button>
             {webEnabledProjects.length > 0 && (
               <button
                 onClick={() => setViewMode('web')}
-                className={`p-2 rounded-md flex items-center justify-center transition-all duration-300 ${viewMode === 'web' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
-                title="Web Preview View"
+                className={`px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-mono font-medium transition-all duration-300 ${viewMode === 'web' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                title="Web View"
               >
-                <MonitorSmartphone size={18} />
+                <MonitorSmartphone size={16} /> Web
               </button>
             )}
           </div>

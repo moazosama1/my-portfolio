@@ -51,7 +51,7 @@ const IPhoneHomeScreen = ({ activeAppUrl: externalAppUrl, onAppOpen, onAppClose,
         <div className="relative w-full h-full bg-slate-900 overflow-hidden font-sans select-none">
             {/* Wallpaper */}
             <div
-                className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800"
+                className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-purple-950"
                 style={{ zIndex: 0 }}
             />
 

@@ -38,8 +38,9 @@ const IPhoneLockScreen = ({ isUnlocked }: IPhoneLockScreenProps) => {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0 z-50 w-full h-full overflow-hidden text-white font-sans flex flex-col justify-between py-6 px-4 select-none"
         >
-          {/* Futuristic Gradient Wallpaper */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950 via-emerald-950/40 to-slate-950" />
+          {/* Futuristic Opaque Dark Gradient Wallpaper */}
+          <div className="absolute inset-0 z-0 bg-slate-950" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-[#020617] opacity-90" />
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[90px] pointer-events-none" />
           <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-accent/20 rounded-full blur-[80px] pointer-events-none" />
 

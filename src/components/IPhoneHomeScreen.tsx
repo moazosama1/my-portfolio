@@ -57,9 +57,10 @@ const IPhoneHomeScreen = ({ activeAppUrl: externalAppUrl, onAppOpen, onAppClose,
 
             {/* Home Screen UI */}
             <div
-                className={`absolute inset-0 z-10 transition-transform duration-300 ease-in-out ${activeAppUrl != null ? 'scale-[0.9] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
+                className={`absolute inset-0 z-10 transition-all duration-300 ease-in-out ${activeAppUrl != null ? 'scale-[0.95] opacity-0 pointer-events-none hidden' : 'scale-100 opacity-100'
                     }`}
             >
+
                 {/* Status Bar Pseudo */}
                 <div className="h-8 w-full flex justify-between px-6 pt-3 text-white text-[10px] font-medium tracking-wide">
                     <span>{currentTime}</span>
@@ -108,7 +109,7 @@ const IPhoneHomeScreen = ({ activeAppUrl: externalAppUrl, onAppOpen, onAppClose,
 
             {/* App Viewer (overlay) */}
             <div
-                className={`absolute inset-0 z-20 bg-background transition-transform duration-300 ease-in-out flex flex-col ${activeAppUrl != null ? 'translate-x-0' : 'translate-x-full'
+                className={`absolute inset-0 z-20 bg-slate-950 transition-transform duration-300 ease-in-out flex flex-col ${activeAppUrl != null ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {activeAppUrl != null && (

@@ -1,60 +1,130 @@
-import { Smartphone, Cpu, Zap, GraduationCap, Award, Sparkles, CheckCircle2, Layers, ShieldCheck, Terminal, Code2, ArrowUpRight, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import {
+  Smartphone,
+  Cpu,
+  Zap,
+  GraduationCap,
+  Sparkles,
+  Layers,
+  Terminal,
+  Code2,
+  Check,
+  Rocket,
+  Trophy,
+  Flame,
+  Signal,
+  ChevronRight,
+} from "lucide-react";
+import { motion, useInView } from "framer-motion";
 
 const highlights = [
   {
     icon: Smartphone,
     label: "Cross-Platform Mobile",
     desc: "Single Dart codebase delivering native-performance iOS & Android applications.",
-    color: "from-emerald-500/15 via-teal-500/5 to-transparent",
     accent: "border-emerald-500/40 text-emerald-400",
+    iconGlow: "shadow-[0_0_25px_rgba(16,185,129,0.35)]",
     badge: "iOS & Android",
+    level: 92,
     points: ["Single Codebase", "Native Performance"],
   },
   {
     icon: Layers,
     label: "Clean Architecture & MVI",
     desc: "Testable, decoupled enterprise codebase using Cubit state management.",
-    color: "from-purple-500/15 via-indigo-500/5 to-transparent",
     accent: "border-purple-500/40 text-purple-400",
+    iconGlow: "shadow-[0_0_25px_rgba(168,85,247,0.35)]",
     badge: "Enterprise",
+    level: 88,
     points: ["Decoupled Data Layer", "BLoC / Cubit"],
   },
   {
     icon: Cpu,
     label: "AI & Real-Time Sync",
     desc: "Seamless Supabase Realtime, Firebase & LLM AI Agent integrations.",
-    color: "from-cyan-500/15 via-blue-500/5 to-transparent",
     accent: "border-cyan-500/40 text-cyan-400",
+    iconGlow: "shadow-[0_0_25px_rgba(34,211,238,0.35)]",
     badge: "Realtime",
+    level: 85,
     points: ["Supabase Realtime", "AI Workflows"],
   },
   {
     icon: Zap,
     label: "High FPS Performance",
     desc: "Smooth 60/120 FPS UI animations with optimized memory handling.",
-    color: "from-amber-500/15 via-orange-500/5 to-transparent",
     accent: "border-amber-500/40 text-amber-400",
+    iconGlow: "shadow-[0_0_25px_rgba(245,158,11,0.35)]",
     badge: "120 FPS",
+    level: 90,
     points: ["Zero Frame Drops", "Optimized Memory"],
   },
 ];
 
 const stats = [
-  { number: "2+", label: "Years Experience" },
-  { number: "10x", label: "HTI CS Cohort" },
-  { number: "100%", label: "Clean Code" },
+  { icon: Rocket, number: "2+", label: "Years Experience", accent: "text-primary" },
+  { icon: Trophy, number: "10x", label: "HTI CS Cohort", accent: "text-cyan-400" },
+  { icon: Flame, number: "7+", label: "Production Apps", accent: "text-accent" },
 ];
+
+const techMarquee = [
+  "Flutter",
+  "Dart",
+  "Clean Architecture",
+  "MVI",
+  "BLoC / Cubit",
+  "Supabase",
+  "Firebase",
+  "PostgreSQL",
+  "Gemini AI",
+  "Google Maps",
+  "ObjectBox",
+  "Hive",
+  "REST APIs",
+  "GitHub Actions",
+];
+
+const AnimatedCounter = ({ value }: { value: string }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const [display, setDisplay] = useState("0");
+
+  useEffect(() => {
+    if (!inView) return;
+    const match = value.match(/^([\d.]+)(.*)$/);
+    if (!match) {
+      setDisplay(value);
+      return;
+    }
+    const target = parseFloat(match[1]);
+    const suffix = match[2] ?? "";
+    const duration = 900;
+    const startedAt = performance.now();
+    let raf = 0;
+    const step = (now: number) => {
+      const t = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = target * eased;
+      const formatted = Number.isInteger(target) ? Math.round(current).toString() : current.toFixed(1);
+      setDisplay(`${formatted}${suffix}`);
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, value]);
+
+  return <span ref={ref}>{display}</span>;
+};
 
 const AboutSection = () => {
   return (
-    <section id="about" className="py-14 sm:py-16 relative overflow-hidden bg-background">
+    <section id="about" className="py-16 sm:py-20 relative overflow-hidden bg-background">
       {/* Ambient Glow Orbs */}
       <div className="absolute top-1/3 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-10 right-0 w-96 h-96 bg-accent/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-cyan-500/5 rounded-full blur-[160px] pointer-events-none" />
 
-      {/* Grid Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+      {/* Grid + radial mask */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_50%,transparent_100%)] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10 max-w-6xl">
         {/* Section Header */}
@@ -62,180 +132,279 @@ const AboutSection = () => {
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="text-center max-w-3xl mx-auto mb-10"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-12"
         >
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-mono font-semibold tracking-wider uppercase mb-2.5 shadow-xs">
-            <Sparkles size={12} className="animate-pulse text-primary" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold tracking-wider uppercase mb-4">
+            <Sparkles size={13} className="animate-pulse" />
             <span>Get To Know Me</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-2.5 text-foreground tracking-tight leading-tight">
-            Architecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-accent">Mobile Systems</span> with Precision
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 text-foreground tracking-tight leading-[1.1]">
+            Architecting <span className="text-gradient">Mobile Systems</span>
+            <br className="hidden sm:inline" />
+            <span className="text-foreground/80"> with Precision</span>
           </h2>
 
-          <p className="text-muted-foreground text-xs sm:text-sm font-mono max-w-xl mx-auto">
-            CS Engineering Graduate & Junior Flutter Developer crafting resilient, enterprise-grade mobile applications.
+          {/* Decorative gradient underline */}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="h-px w-12 bg-gradient-to-r from-transparent to-primary/60" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <span className="h-px w-12 bg-gradient-to-l from-transparent to-primary/60" />
+          </div>
+
+          <p className="text-muted-foreground text-sm sm:text-base font-mono max-w-xl mx-auto">
+            CS Engineering graduate & Junior Flutter developer crafting resilient, enterprise-grade mobile applications.
           </p>
         </motion.div>
 
-        {/* Bento Box Grid (Main Bio + Live IDE Code Box) */}
-        <div className="grid lg:grid-cols-12 gap-6 items-stretch mb-6">
-          
-          {/* Main Bio Card (Span 7) */}
+        {/* ===== BENTO ROW ===== */}
+        <div className="grid lg:grid-cols-12 gap-5 items-stretch mb-6">
+          {/* Bio Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="lg:col-span-7 rounded-3xl bg-card/70 backdrop-blur-xl p-6 sm:p-8 border-t-2 border-t-primary/70 border-x border-b border-border/70 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-primary/50 transition-all duration-300"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-7 group relative rounded-3xl bg-card/70 backdrop-blur-xl p-6 sm:p-8 border border-border/70 hover:border-primary/40 transition-all duration-500 shadow-xl overflow-hidden"
           >
-            {/* Top Right Ambient Glow */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-primary/15 via-cyan-500/10 to-transparent rounded-bl-full pointer-events-none transition-opacity group-hover:opacity-100 opacity-60" />
+            {/* Corner ambient glow */}
+            <div className="absolute -top-16 -right-16 w-56 h-56 bg-gradient-to-bl from-primary/25 via-cyan-500/15 to-transparent rounded-full blur-3xl pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity duration-700" />
 
-            <div>
-              {/* Header profile row */}
-              <div className="flex items-center gap-3.5 mb-5 relative z-10">
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-primary/20 via-cyan-500/10 to-accent/20 border border-primary/30 text-primary shadow-sm group-hover:scale-105 transition-transform shrink-0">
-                  <GraduationCap size={24} />
+            {/* Live "signal" corner */}
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 text-[10px] font-mono font-bold text-emerald-400/90">
+              <Signal size={11} className="animate-pulse" />
+              <span>ONLINE</span>
+            </div>
+
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center gap-3.5 mb-5">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary via-cyan-400 to-accent blur-md opacity-60 group-hover:opacity-90 transition-opacity" />
+                  <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/25 via-cyan-500/15 to-accent/25 border border-primary/40 text-primary group-hover:scale-105 transition-transform">
+                    <GraduationCap size={24} />
+                  </div>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-xl sm:text-2xl font-bold text-foreground font-heading">Moaz Osama</h3>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground font-heading tracking-tight">
+                      Moaz Osama
+                    </h3>
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold tracking-wider shadow-xs flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       VERIFIED ENGINEER
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground font-mono mt-0.5">CS Engineering Graduate • Elite 10x Cohort at HTI</p>
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                    CS Engineering Graduate · Elite 10x Cohort at HTI
+                  </p>
                 </div>
               </div>
 
-              {/* Bio Paragraphs */}
-              <div className="space-y-3 text-muted-foreground text-xs sm:text-sm leading-relaxed mb-5 relative z-10">
-                <p className="border-l-2 border-primary pl-3 py-0.5 text-foreground/90 font-medium">
-                  I'm a <span className="text-primary font-semibold">Junior Flutter Developer</span> with <span className="text-foreground font-mono font-bold">2+ years</span> architecting enterprise-grade, cross-platform applications using Clean Architecture, MVI, and BLoC/Cubit.
+              {/* Bio */}
+              <div className="space-y-3 text-muted-foreground text-sm leading-relaxed mb-5">
+                <p className="text-foreground/90 border-l-2 border-primary/70 pl-3 py-0.5 font-medium">
+                  I'm a <span className="text-primary font-semibold">Junior Flutter Developer</span> with{" "}
+                  <span className="text-foreground font-mono font-bold">2+ years</span> architecting enterprise-grade cross-platform applications using Clean Architecture, MVI, and BLoC/Cubit.
                 </p>
-                <p>
-                  As a CS Engineering graduate from the Elite 10x Cohort at HTI, I have a proven freelance track record delivering enterprise-grade solutions including real-time tracking systems and published apps on Google Play.
-                </p>
-                <p>
-                  Specialized in integrating AI agents into mobile workflows and building robust backend infrastructure with Firebase, Supabase, and RESTful APIs.
+                <p className="text-xs sm:text-sm">
+                  Proven freelance track record delivering enterprise solutions including real-time tracking systems and apps published on Google Play, with deep specialization in integrating AI agents into mobile workflows and building robust backends with Firebase, Supabase, and REST APIs.
                 </p>
               </div>
-            </div>
 
-            {/* Quick Tech Tag Pills */}
-            <div className="flex flex-wrap gap-1.5 pt-4 border-t border-border/40 relative z-10">
-              {["Flutter", "Dart", "Clean Arch", "MVI / Cubit", "Firebase", "Supabase", "REST APIs", "AI Agents"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-0.5 rounded-lg bg-secondary/60 border border-border/50 text-[11px] font-mono font-medium text-muted-foreground hover:border-primary/40 hover:text-foreground transition-all duration-200"
-                >
-                  #{tag}
-                </span>
-              ))}
+              {/* Achievement chips */}
+              <div className="grid grid-cols-3 gap-2 mb-5">
+                {[
+                  { label: "Google Play", value: "Published" },
+                  { label: "Realtime", value: "Supabase" },
+                  { label: "AI Agents", value: "Gemini" },
+                ].map((chip) => (
+                  <div
+                    key={chip.label}
+                    className="rounded-xl border border-border/60 bg-secondary/30 backdrop-blur-md p-2.5 text-center hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
+                  >
+                    <div className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mb-0.5">
+                      {chip.label}
+                    </div>
+                    <div className="text-xs font-bold text-foreground font-mono">{chip.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tag pills */}
+              <div className="flex flex-wrap gap-1.5 pt-4 border-t border-border/40 mt-auto">
+                {["Flutter", "Dart", "Clean Arch", "MVI / Cubit", "Firebase", "Supabase", "REST APIs", "AI Agents"].map((tag, i) => (
+                  <span
+                    key={tag}
+                    className={`text-[10px] font-mono font-medium px-2.5 py-1 rounded-lg border transition-colors ${i === 0
+                      ? "bg-primary/10 border-primary/20 text-primary"
+                      : "bg-secondary/60 border-border/50 text-muted-foreground hover:text-foreground"
+                      }`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </motion.div>
 
-          {/* Code Snippet Card (Span 5) */}
+          {/* Code Snippet Card (IDE-style) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="lg:col-span-5 rounded-3xl bg-slate-950/90 backdrop-blur-xl border-t-2 border-t-emerald-500/70 border-x border-b border-slate-800/80 p-5 sm:p-6 shadow-2xl flex flex-col justify-between font-mono relative group hover:border-emerald-500/50 transition-all duration-300 overflow-hidden"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-5 group relative rounded-3xl bg-slate-950/95 backdrop-blur-xl border border-slate-800/80 hover:border-emerald-500/40 transition-all duration-500 shadow-2xl overflow-hidden flex flex-col"
           >
-            {/* Ambient inner glow */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            {/* Ambient glows */}
+            <div className="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-10 w-32 h-32 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* macOS Window Header */}
-            <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-800/80">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800/80 bg-slate-900/50 backdrop-blur">
               <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                <div className="w-3 h-3 rounded-full bg-rose-500/90 shadow-[0_0_6px_rgba(244,63,94,0.6)]" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/90 shadow-[0_0_6px_rgba(245,158,11,0.6)]" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/90 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
               </div>
               <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
                 <Terminal size={12} className="text-emerald-400" /> developer_profile.dart
               </span>
-            </div>
-
-            {/* Code Snippet Container */}
-            <div className="text-[11px] sm:text-xs text-slate-300 leading-relaxed space-y-1 overflow-x-auto py-1 font-mono">
-              <div><span className="text-purple-400">class</span> <span className="text-emerald-400">FlutterArchitect</span> &#123;</div>
-              <div className="pl-4"><span className="text-purple-400">final</span> String name = <span className="text-amber-300">'Moaz Osama'</span>;</div>
-              <div className="pl-4"><span className="text-purple-400">final</span> String role = <span className="text-amber-300">'Junior Flutter Developer'</span>;</div>
-              <div className="pl-4"><span className="text-purple-400">final</span> String degree = <span className="text-amber-300">'CS Engineer (HTI 10x)'</span>;</div>
-              <div className="pl-4"><span className="text-purple-400">final</span> List&lt;String&gt; stack = [</div>
-              <div className="pl-8 text-cyan-300">'Flutter', 'Clean Arch', 'MVI', 'Supabase'</div>
-              <div className="pl-4">];</div>
-              <div className="pl-4"><span className="text-purple-400">final</span> bool available = <span className="text-emerald-400">true</span>;</div>
-              <div className="pl-4 py-0.5 text-slate-500">// Scalable, clean & production ready</div>
-              <div className="pl-4"><span className="text-purple-400">void</span> <span className="text-cyan-400">buildApp</span>() &#123;</div>
-              <div className="pl-8 text-emerald-400">print('Scalable. Clean. Reliable.');<span className="w-1.5 h-3.5 bg-emerald-400 animate-pulse inline-block align-middle ml-1" /></div>
-              <div className="pl-4">&#125;</div>
-              <div>&#125;</div>
-            </div>
-
-            {/* Status indicator bar */}
-            <div className="my-2.5 py-1 px-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Status: 200 OK
+              <span className="text-[10px] font-mono text-emerald-400/80 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                live
               </span>
-              <span>Clean Code Verified</span>
             </div>
 
-            {/* Stats Pills Grid */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/80 text-center">
-              {stats.map(({ number, label }) => (
-                <div key={label} className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 transition-colors">
-                  <div className="text-sm sm:text-base font-bold text-emerald-400 font-heading">{number}</div>
-                  <div className="text-[9px] text-slate-400 leading-tight mt-0.5">{label}</div>
-                </div>
-              ))}
+            {/* Code Body with line numbers */}
+            <div className="flex-1 flex text-[11px] sm:text-xs leading-relaxed font-mono">
+              {/* Line numbers gutter */}
+              <div className="select-none py-3 px-3 text-right text-slate-600 border-r border-slate-800/60 bg-slate-900/30">
+                {Array.from({ length: 12 }, (_, i) => (
+                  <div key={i}>{i + 1}</div>
+                ))}
+              </div>
+
+              {/* Code */}
+              <div className="flex-1 py-3 px-3 sm:px-4 text-slate-300 space-y-0.5 overflow-x-auto">
+                <div><span className="text-purple-400">class</span> <span className="text-emerald-400">FlutterArchitect</span> <span className="text-slate-400">&#123;</span></div>
+                <div className="pl-4"><span className="text-purple-400">final</span> <span className="text-cyan-300">String</span> name <span className="text-slate-400">=</span> <span className="text-amber-300">'Moaz Osama'</span>;</div>
+                <div className="pl-4"><span className="text-purple-400">final</span> <span className="text-cyan-300">String</span> role <span className="text-slate-400">=</span> <span className="text-amber-300">'Flutter Engineer'</span>;</div>
+                <div className="pl-4"><span className="text-purple-400">final</span> <span className="text-cyan-300">String</span> degree <span className="text-slate-400">=</span> <span className="text-amber-300">'CS · HTI 10x'</span>;</div>
+                <div className="pl-4"><span className="text-purple-400">final</span> <span className="text-cyan-300">List</span>&lt;<span className="text-cyan-300">String</span>&gt; stack <span className="text-slate-400">=</span> [</div>
+                <div className="pl-8 text-amber-300">'Flutter', 'Clean Arch',</div>
+                <div className="pl-8 text-amber-300">'MVI', 'Supabase'</div>
+                <div className="pl-4"><span className="text-slate-400">];</span></div>
+                <div className="pl-4"><span className="text-purple-400">final</span> <span className="text-cyan-300">bool</span> available <span className="text-slate-400">=</span> <span className="text-orange-400">true</span>;</div>
+                <div className="pl-4 text-slate-500 italic">// Scalable · Clean · Production</div>
+                <div className="pl-4"><span className="text-purple-400">void</span> <span className="text-blue-400">buildApp</span>() <span className="text-slate-400">=&gt;</span> <span className="text-emerald-300">deploy</span>();<span className="inline-block w-1.5 h-3 bg-emerald-400 animate-pulse align-middle ml-1" /></div>
+                <div><span className="text-slate-400">&#125;</span></div>
+              </div>
+            </div>
+
+            {/* Status footer bar */}
+            <div className="border-t border-slate-800/80 px-3 py-2 bg-slate-900/60 flex items-center justify-between text-[10px] font-mono">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                200 OK · Clean Build
+              </span>
+              <span className="text-slate-500 flex items-center gap-1">
+                dart <span className="text-emerald-400/80">v3.5</span>
+              </span>
             </div>
           </motion.div>
-
         </div>
 
-        {/* 4 Pillars Cards Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mt-6">
-          {highlights.map(({ icon: Icon, label, desc, color, accent, badge, points }, idx) => (
+        {/* ===== ANIMATED STATS BAR ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="grid grid-cols-3 gap-3 sm:gap-4 mb-8"
+        >
+          {stats.map(({ icon: Icon, number, label, accent }) => (
+            <div
+              key={label}
+              className="group relative rounded-2xl bg-card/60 backdrop-blur-xl border border-border/60 hover:border-primary/40 p-4 sm:p-5 transition-all duration-300 overflow-hidden hover:-translate-y-0.5"
+            >
+              <div className="absolute -top-8 -right-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                <div className={`p-2.5 rounded-xl bg-primary/10 border border-primary/20 ${accent} shrink-0 group-hover:scale-110 transition-transform`}>
+                  <Icon size={18} />
+                </div>
+                <div className="min-w-0">
+                  <div className={`text-2xl sm:text-3xl font-bold font-heading ${accent} leading-none`}>
+                    <AnimatedCounter value={number} />
+                  </div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase tracking-wider mt-1">
+                    {label}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* ===== 4 PILLARS ===== */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {highlights.map(({ icon: Icon, label, desc, accent, iconGlow, badge, level, points }, idx) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.08 * idx }}
-              className="rounded-2xl bg-card/60 backdrop-blur-xl p-5 border-t-2 border-t-primary/50 border-x border-b border-border/60 hover:border-t-primary hover:border-primary/60 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between shadow-md"
+              className="group relative rounded-2xl bg-card/60 backdrop-blur-xl p-5 border border-border/60 hover:border-primary/50 hover:shadow-[0_12px_35px_rgba(var(--primary),0.18)] hover:-translate-y-1 transition-all duration-300 overflow-hidden shadow-md flex flex-col"
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-              
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform shadow-xs">
-                    <Icon size={18} />
+              {/* Ambient corner glow */}
+              <div className="absolute -top-12 -right-12 w-28 h-28 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/30 transition-all duration-500 pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col h-full">
+                {/* Header row */}
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className={`p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary ${iconGlow} group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0`}>
+                    <Icon size={20} />
                   </div>
                   <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-secondary/80 border ${accent}`}>
                     {badge}
                   </span>
                 </div>
 
-                <h3 className="font-bold text-foreground mb-1 text-sm sm:text-base font-heading group-hover:text-primary transition-colors">
+                <h3 className="font-bold text-foreground text-sm sm:text-base font-heading group-hover:text-primary transition-colors leading-tight mb-1.5">
                   {label}
                 </h3>
 
-                <p className="text-xs text-muted-foreground leading-relaxed font-mono mb-3">{desc}</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed font-mono mb-3 line-clamp-3">
+                  {desc}
+                </p>
 
-                {/* Sub Points as horizontal wrap pills */}
-                <div className="flex flex-wrap gap-1.5 pt-3 border-t border-border/40">
+                {/* Skill meter */}
+                <div className="mb-3">
+                  <div className="flex items-center justify-between text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
+                    <span>Proficiency</span>
+                    <span className="text-foreground font-bold">{level}%</span>
+                  </div>
+                  <div className="h-1 rounded-full bg-secondary/60 overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${level}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1, delay: 0.2 + idx * 0.08, ease: "easeOut" }}
+                      className="h-full bg-gradient-to-r from-primary via-cyan-400 to-accent rounded-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Sub points */}
+                <div className="flex flex-wrap gap-1 pt-3 border-t border-border/40 mt-auto">
                   {points.map((pt) => (
                     <span
                       key={pt}
-                      className="px-2 py-0.5 text-[10px] rounded-lg bg-secondary/60 border border-border/50 hover:border-primary/40 hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-all duration-200 font-mono font-medium flex items-center gap-1 shadow-xs cursor-default"
+                      className="px-1.5 py-0.5 text-[10px] rounded-md bg-secondary/60 border border-border/50 hover:border-primary/40 hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-all duration-200 font-mono font-medium flex items-center gap-1"
                     >
-                      <Check size={10} className="text-primary shrink-0" />
+                      <Check size={9} className="text-primary shrink-0" />
                       <span>{pt}</span>
                     </span>
                   ))}
@@ -244,7 +413,48 @@ const AboutSection = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* ===== TECH MARQUEE ===== */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="relative rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl overflow-hidden"
+        >
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+
+          <div className="flex items-center gap-3 px-4 py-3">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary shrink-0 flex items-center gap-1.5 border-r border-border/50 pr-3">
+              <ChevronRight size={12} />
+              Stack
+            </span>
+            <div className="relative flex-1 overflow-hidden">
+              <div className="flex gap-3 animate-[marquee_28s_linear_infinite] whitespace-nowrap will-change-transform">
+                {[...techMarquee, ...techMarquee].map((tech, i) => (
+                  <span
+                    key={`${tech}-${i}`}
+                    className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg border border-border/50 bg-secondary/40 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors flex items-center gap-1.5"
+                  >
+                    <Code2 size={11} className="text-primary/70" />
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
+
+      {/* Marquee keyframes */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 };

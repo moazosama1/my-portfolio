@@ -4,7 +4,6 @@ import { Github, Play, Globe, Apple, Smartphone, ChevronLeft, LayoutGrid, X, Inf
 import PhoneFrame from "./PhoneFrame";
 import IPhoneContainer from "./IPhoneContainer";
 import WebFrame from "./WebFrame";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 type Project = {
     title: string;
@@ -387,7 +386,6 @@ const ProjectCard = ({ proj, isActive, compact = false, onCardClick, onOpenDetai
 const ProjectsSection = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
     const phoneRef = useRef<HTMLDivElement>(null);
-    const isMobile = useIsMobile();
     const [isLocked, setIsLocked] = useState(false);
     const webEnabledProjects = projects.filter(
         (project) => project.web && project.web !== "#" && project.web !== ""
@@ -598,7 +596,7 @@ const ProjectsSection = () => {
                 ) : (
                     /* ===== GRID VIEW ===== */
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
-                        <div className={`w-full ${isMobile ? '' : 'lg:w-1/2'} flex flex-col ${isMobile ? '' : 'order-2 lg:order-1'}`}>
+                        <div className="w-full lg:w-1/2 flex flex-col order-2 lg:order-1">
                             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {displayedProjects.map((proj, i) => (
                                     <motion.div
@@ -628,8 +626,7 @@ const ProjectsSection = () => {
                             )}
                         </div>
 
-                        {!isMobile && (
-                            <div ref={phoneRef} className="w-full lg:w-1/2 lg:sticky lg:top-28 lg:self-start flex justify-center h-fit order-1 lg:order-2" style={{ perspective: "1200px" }}>
+                        <div ref={phoneRef} className="w-full lg:w-1/2 lg:sticky lg:top-28 lg:self-start flex justify-center h-fit order-1 lg:order-2 pb-14 lg:pb-0" style={{ perspective: "1200px" }}>
                             <motion.div
                                 style={isLocked ? { rotateX: 0, scale: 1, y: 0 } : { rotateX: phoneRotateX, scale: phoneScale, y: phoneY }}
                                 className="w-[90vw] max-w-[320px] md:max-w-[360px] lg:max-w-[380px] relative"
@@ -652,7 +649,6 @@ const ProjectsSection = () => {
                                 )}
                             </motion.div>
                         </div>
-                        )}
                     </div>
                 )}
 
